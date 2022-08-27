@@ -13,14 +13,14 @@ let arrButtons = []; // Todos los botones, luego los botones sin minas
 let adjacents = []; // guarda los casileros aledaños a uno
 let button;
 let buttonTemp;
-let buttonSize = 32
-let resizeCount= 0
+let buttonSize = 32;
 
 //variables relacionadas al estado del tablero
 let firstButtonClicked = false
-let endState = false
+let titleSet = false
 let x;
 let y;
+let width;
 
 //variables relacionadas a las minas
 let amountMines; // Cantidad de minas y tamaño del tablero
@@ -146,30 +146,29 @@ function findAdjacents(button) {
 	adjacents = []
 	for (let i = -1; i <= 1; i++) {
 	tempPositionY = button.positionY + i
-		if (tempPositionY >= 0) {
+		if (tempPositionY >= 0 && tempPositionY < y) {
 			for (let j = -1; j <= 1; j++) {
 				tempPositionX = button.positionX + j
-				if (tempPositionX >= 0) {
-					if (!(tempPositionY >= y || tempPositionX >= x)) {
-						if (tempPositionY != button.positionY || tempPositionX != button.positionX) {
-							buttonTemp = selectButtonFromId(`${tempPositionY.toString().padStart(2, '0')}${tempPositionX.toString().padStart(2, '0')}`)
-							if (!(buttonTemp.revealed)) {
-								adjacents.push(buttonTemp)
-							}
-						}
-					}
-				}				
+				if (tempPositionX >= 0 && tempPositionX < x) {
+					addButton(tempPositionX, tempPositionY)
+				}
 			}
 		}
 	}
+	function addButton(tempPositionX, tempPositionY) {
+		if (tempPositionY != button.positionY || tempPositionX != button.positionX) {
+			buttonTemp = selectButtonFromId(`${tempPositionY.toString().padStart(2, '0')}${tempPositionX.toString().padStart(2, '0')}`)
+			if (!(buttonTemp.revealed)) {
+				adjacents.push(buttonTemp)
+			}
+		}
+	}
+	// devuelve el botton al ingresar su id
+	function selectButtonFromId(buttonId) {
+		return (arrButtons.filter(button => {return button.element.id === buttonId}))[0]
+	}
 	return adjacents
 }
-
-// devuelve el botton al ingresar su id
-function selectButtonFromId(buttonId) {
-	return (arrButtons.filter(button => {return button.element.id === buttonId}))[0]
-}
-
 
 // funcion del click, setea clicked, revela el valor, y si no quedan bottones sin bombas por revelar, gano.
 function singleClickButton(button) {
@@ -206,7 +205,7 @@ function revealValue(button) {
 		button.revealed = true
 		button.element.textContent = button.element.value
 		button.element.style.backgroundColor = "transparent"
-		if (button.element.value === "💣" && !(endState)) {
+		if (button.element.value === "💣") {
 			return endGame()
 		}
 		if (button.element.value === "0") {
@@ -218,6 +217,14 @@ function revealValue(button) {
 		return endWon()
 	}
 }
+
+// funcion que ejecuta reveal sobre el return de aledañas del botton que entre por variable.
+function revealAdjacents(button) {
+	findAdjacents(button).forEach(button => {
+		revealValue(button)
+	})
+}
+
 //reveal sin cascade que se ejecuta al perder
 function endGameReveal(button) {
 	if (!(button.flagged)) {
@@ -230,19 +237,11 @@ function endGameReveal(button) {
 	}
 }
 
-// function() {}uncion que ejecuta reveal sobre el return de aledañas del botton que entre por variable.
-function revealAdjacents(button) {
-	findAdjacents(button).forEach(button => {
-		revealValue(button)
-	})
-}
-
 // Inicializa el tablero, creando los botones 
 function boardGenerate() {
 	arrButtons = []
 	board.innerHTML = ''
 	firstButtonClicked = false	
-	endState = false
 	board.style.columnCount = x
 	board.style.width = `${(x*buttonSize)}px`
 	amountMines = Math.floor(x * y / minesRatio)
@@ -257,8 +256,8 @@ function boardGenerate() {
 
 //lo hace "responsive"
 function checkSize() {
-	if(x*(buttonSize+1) > window.innerWidth || x*(buttonSize+1) > screen.width) {
-		resizeCount++
+	width = x*(buttonSize+1)
+	if(width > window.innerWidth || width > screen.width) {
 		x--
 		return reset()
 	}
@@ -268,19 +267,21 @@ function checkSize() {
 function titleGenerate() {
 	title.style.width = board.style.width
 	mines.textContent = amountMines
-	document.getElementById("easy").addEventListener("click", function() {setDificulty("easy")})
-	document.getElementById("normal").addEventListener("click", function() {setDificulty("normal")})
-	document.getElementById("hard").addEventListener("click", function() {setDificulty("hard")})
-	document.getElementById("custom").addEventListener("click", function() {setDificulty("custom")})
-	face.addEventListener("click", function() {reset()})
 	face.textContent = "🙂"
-	instructions.addEventListener("click", function() {showInstructions()})
 	timer.textContent = `${time.toString().padStart(4, '0')}`
+	if (!(titleSet)) {
+		document.getElementById("easy").addEventListener("click", function() {setDificulty("easy")})
+		document.getElementById("normal").addEventListener("click", function() {setDificulty("normal")})
+		document.getElementById("hard").addEventListener("click", function() {setDificulty("hard")})
+		document.getElementById("custom").addEventListener("click", function() {setDificulty("custom")})
+		face.addEventListener("click", function() {reset()})
+		instructions.addEventListener("click", function() {showInstructions()})
+	}
+	titleSet = true
 }
 
 // we are on the end game now
 function endGame() {
-	endState = true
 	face.textContent = "🤯"
 	arrButtons.forEach(button => endGameReveal(button))
 	alert("¡Había una bomba en ese casillero! Vuelve a intentarlo.")
@@ -289,7 +290,6 @@ function endGame() {
 
 // there's only one way
 function endWon() {
-	endState = true
 	face.textContent = "😎"
 	alert("¡Ganaste! Puedes probar una dificultad más alta.")
 	reset()
@@ -322,17 +322,17 @@ function setDificulty(dificultyLevel) {
 		case "easy":
 			x = 16
 			y = 10
-			minesRatio = 5
+			minesRatio = 5.2
 			break;
 		case "normal":
 			x = 20
 			y = 12
-			minesRatio = 4.5
+			minesRatio = 4.8
 			break;
 		case "hard":
 			x = 24
 			y = 14
-			minesRatio = 4
+			minesRatio = 4.4
 			break;
 		case "custom":
 			setCustom()
@@ -343,8 +343,8 @@ function setDificulty(dificultyLevel) {
 
 // funcion que setea el prompt para crear un custom
 function setCustom() {
-	x = window.prompt("Casillas horizontales", 24)
-	y = window.prompt("Casillas verticales", 14)
+	x = window.prompt("Casillas horizontales", 20)
+	y = window.prompt("Casillas verticales", 12)
 	minesRatio = window.prompt("Cantidad de bombas en un ratio. Ej: 4 equivale a 1 mina cada 4 casillas", 4)
 	if (minesRatio <= 2) {
 		alert(`Son demasiadas minas, sería imposible, Elige otros valores.`)
