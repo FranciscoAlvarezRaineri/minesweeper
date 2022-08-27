@@ -1,0 +1,59 @@
+body {
+    font-family: sans-serif;
+    background-color: #301800;
+    color: #cfe7ff;
+}
+
+.titlebutton {
+    background-color: #603000;
+    color: #9fcfff;
+    border-radius: 10px;
+}
+
+.square {
+    border-radius: 4px;
+    border: 2px solid #003018;
+    background-color: #603000;
+    margin: 0px;
+    color:  #cfe7ff
+}
+
+#board {
+    border-radius: 10px;
+    border: 5px solid #003018;
+    padding: 2px;
+    margin: 5px auto;
+    display: flex;
+    flex-flow: row wrap;
+    column-gap: 0px;
+    justify-content: space-between;
+}
+
+#title {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-count: 5;
+}
+
+.title-element {
+    width: 20%;
+    column-width: auto;
+
+}
+
+#face {
+    text-align: center;    
+}
+
+#mines,
+#instructions {
+    text-align: left;
+}
+
+#timer,
+#dificulty {
+    text-align: right;
+}
