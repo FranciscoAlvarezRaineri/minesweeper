@@ -1,12 +1,7 @@
 // Variables
 // los elementos del body
 let board = document.getElementById("board");
-let title = document.getElementById("title");
-let mines = document.getElementById("mines");
-let dificulty = document.getElementById("dificulty");
-let face = document.getElementById("face");
-let instructions = document.getElementById("instructions")
-let timer = document.getElementById("timer")
+
 
 // las variables de uso
 let arrButtons = []; // Todos los botones, luego los botones sin minas
@@ -17,7 +12,7 @@ let buttonSize = 32;
 
 //variables relacionadas al estado del tablero
 let firstButtonClicked = false
-let titleSet = false
+
 let x;
 let y;
 let width;
@@ -28,13 +23,90 @@ let minesRatio;
 let mineCount = 0; // guarda cuantas bombas aledañas tiene un boton
 let tempAmountMines = amountMines;
 
-// variables relacionadas al contador
-let time = 0 
-let timeX;
-
-
 
 // Fuciones
+
+// Crea el título
+class Title {
+	constructor() {
+		this.title = document.getElementById("title");
+		this.titleInit = false;
+		this.mines = document.getElementById("mines");
+		this.dificulty = document.getElementById("dificulty");
+		this.face = document.getElementById("face");
+		this.instructions = document.getElementById("instructions");
+		this.timer = document.getElementById("timer");
+		this.time = 0;
+		this.timeX;
+		this.titleGenerate();
+	}
+
+	// Setea la zona del encabezado
+	titleGenerate() {
+		this.title.style.width = board.style.width
+		this.mines.textContent = amountMines
+		this.face.textContent = "🙂"
+		this.timer.textContent = `${this.time.toString().padStart(4, '0')}`
+		this.titleInit = true
+	}
+	
+	// funciones que manejan el timer
+	timerStart(time) {
+		this.timeX = setInterval(function () {
+			time++
+			this.timer.textContent = `${time.toString().padStart(4, '0')}`}
+		, 1000)
+	}
+	timeStop() {
+	 	clearInterval(this.timeX)
+	}
+
+	// selecciona la dificultad
+	setDificulty(dificultyLevel) {
+		switch (dificultyLevel) {
+			case "easy":
+				x = 16
+				y = 10
+				minesRatio = 5.2
+				break;
+			case "normal":
+				x = 20
+				y = 12
+				minesRatio = 4.8
+				break;
+			case "hard":
+				x = 24
+				y = 14
+				minesRatio = 4.4
+				break;
+			case "custom":
+				titleObj.setCustom()
+				break;
+		}
+		return reset()
+	}
+
+	// funcion que setea el prompt para crear un custom
+	setCustom() {
+		x = window.prompt("Casillas horizontales", 20)
+		y = window.prompt("Casillas verticales", 12)
+		minesRatio = window.prompt("Cantidad de bombas en un ratio. Ej: 4 equivale a 1 mina cada 4 casillas", 4)
+		if (minesRatio <= 2) {
+			alert(`Son demasiadas minas, sería imposible, Elige otros valores.`)
+			return setCustom()
+		}
+		if (minesRatio > 8) {
+			alert(`No son suficientes minas, sería demasiado fácil, Elige otros valores.`)
+			return setCustom()
+		}
+	}
+
+	// alerta sobre las instrucciones
+	showInstructions() {
+		alert("Un click sobre la casilla revela su contenido. El numero revelado indica la cantidad de bombas aledañas a la casilla. Si clickeas en una bomba pierdes. Un click sostenido sobre una casilla sin revelar, la marca como una bomba. Un click sostenido sobre una casilla revelada, revela las aledañas que no esten marcadas como bombas.")
+	}
+
+}
 
 // Crea los casilleros
 class Button {
@@ -109,7 +181,7 @@ class Button {
 // Inicializa el juego cuando se hace click en un cuadrado
 function startGame(button) {
 	firstButtonClicked = true //setea la variable para que no vuelva a correr esta funcion
-	timerStart()
+	titleObj.timerStart(titleObj.time)
 	button.value = "reserved"//evita que al boton clickeado se le asigne una bomba
 	setMines()
 	setValues()
@@ -263,22 +335,7 @@ function checkSize() {
 	}
 }
 
-// Solo se ejecuta una vez al cargar la pagina y setea la zona del encabezado
-function titleGenerate() {
-	title.style.width = board.style.width
-	mines.textContent = amountMines
-	face.textContent = "🙂"
-	timer.textContent = `${time.toString().padStart(4, '0')}`
-	if (!(titleSet)) {
-		document.getElementById("easy").addEventListener("click", function() {setDificulty("easy")})
-		document.getElementById("normal").addEventListener("click", function() {setDificulty("normal")})
-		document.getElementById("hard").addEventListener("click", function() {setDificulty("hard")})
-		document.getElementById("custom").addEventListener("click", function() {setDificulty("custom")})
-		face.addEventListener("click", function() {reset()})
-		instructions.addEventListener("click", function() {showInstructions()})
-	}
-	titleSet = true
-}
+
 
 // we are on the end game now
 function endGame() {
@@ -297,76 +354,24 @@ function endWon() {
 
 // reset general del juego
 function reset(){
-	timeStop()
+	titleObj.timeStop()
 	boardGenerate()
-	titleGenerate()
-}
-
-
-// funciones que manejan el timer
-function timerStart() {
-	timeX = setInterval(function () {
-		time++
-		timer.textContent = `${time.toString().padStart(4, '0')}`}
-	, 1000)
-}
-function timeStop() {
- 	clearInterval(timeX)
- 	time = 0
-}
-
-
-// selecciona la dificultad
-function setDificulty(dificultyLevel) {
-	switch (dificultyLevel) {
-		case "easy":
-			x = 16
-			y = 10
-			minesRatio = 5.2
-			break;
-		case "normal":
-			x = 20
-			y = 12
-			minesRatio = 4.8
-			break;
-		case "hard":
-			x = 24
-			y = 14
-			minesRatio = 4.4
-			break;
-		case "custom":
-			setCustom()
-			break;
-	}
-	return reset()
-}
-
-// funcion que setea el prompt para crear un custom
-function setCustom() {
-	x = window.prompt("Casillas horizontales", 20)
-	y = window.prompt("Casillas verticales", 12)
-	minesRatio = window.prompt("Cantidad de bombas en un ratio. Ej: 4 equivale a 1 mina cada 4 casillas", 4)
-	if (minesRatio <= 2) {
-		alert(`Son demasiadas minas, sería imposible, Elige otros valores.`)
-		return setCustom()
-	}
-	if (minesRatio > 8) {
-		alert(`No son suficientes minas, sería demasiado fácil, Elige otros valores.`)
-		return setCustom()
-	}
-}
-			
-
-
-// alerta sobre las instrucciones
-function showInstructions() {
-	alert("Un click sobre la casilla revela su contenido. El numero revelado indica la cantidad de bombas aledañas a la casilla. Si clickeas en una bomba pierdes. Un click sostenido sobre una casilla sin revelar, la marca como una bomba. Un click sostenido sobre una casilla revelada, revela las aledañas que no esten marcadas como bombas.")
+	titleObj = {}
+	titleObj = new Title
 }
 
 
 // Ejecución
 
-setDificulty("normal")
+x = 20
+y = 12
+minesRatio = 4.8
 boardGenerate()
-titleGenerate()
+let titleObj = new Title
+document.getElementById("easy").addEventListener("click", function() {titleObj.setDificulty("easy")})
+document.getElementById("normal").addEventListener("click", function() {titleObj.setDificulty("normal")})
+document.getElementById("hard").addEventListener("click", function() {titleObj.setDificulty("hard")})
+document.getElementById("custom").addEventListener("click", function() {titleObj.setDificulty("custom")})
+titleObj.face.addEventListener("click", function() {reset()})
+titleObj.instructions.addEventListener("click", function() {titleObj.showInstructions()})
 window.onresize = function() {checkSize()}
