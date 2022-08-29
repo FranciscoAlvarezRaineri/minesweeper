@@ -12,7 +12,6 @@ let board = document.getElementById("board");
 let titleObj
 
 // las variables de uso
-let arrButtons = []; // Todos los botones, luego los botones sin minas
 let adjacents = []; // guarda los casileros aledaños a uno
 let button;
 let buttonTemp;
@@ -36,6 +35,49 @@ let timeX;
 
 
 // Fuciones
+
+// Inicializa el tablero, creando los botones 
+function boardGenerate() {
+	board = document.createElement("div")
+	board.id = "board"
+	board.x = checkSize()[0]
+	board.y = checkSize()[1]
+	board.style.columnCount = board.x
+	board.style.width = `${(board.x*buttonSize)}px`
+	board.arrButtons = []; // Todos los botones, luego los botones sin minas
+	amountMines = Math.floor(board.x * board.y / minesRatio)
+	for (let i = 0; i < board.y; i++) {
+		for (let j = 0; j < board.x; j++) {
+			new Button (i, j);
+		}
+	}
+	document.body.appendChild(board)
+}
+
+//lo hace "responsive"
+function checkSize() {
+	width = x * (buttonSize + 1)
+	if (!(isMobile)) {
+		if(width > window.innerWidth) {
+			x--
+			checkSize()
+		}
+		if((width + buttonSize) < window.innerWidth && x < xInit) {
+			x++
+			checkSize()
+		}
+	} else if(isMobile) {
+		if(width > screen.width) {
+			x--
+			checkSize()
+		}
+		if((width + 2*buttonSize) < screen.width) {
+			x++
+			checkSize()
+		}
+	}
+	return [x, y]
+}
 
 // Crea el título
 class Title {
@@ -81,7 +123,7 @@ class Button {
 		this.setClick(this)
 		board.appendChild(this.element)
 		//agrega al boton a la lista de botones
-		arrButtons.push(this)
+		board.arrButtons.push(this)
 	}
 	//inicializa la acción al hacer click o hold
 	setClick(button) {
@@ -143,9 +185,9 @@ function startGame(button) {
 function setMines() {
 	let i = 0;
 	while (i < amountMines) {
-		let location = Math.floor(Math.random()*arrButtons.length)
-		if (arrButtons[location].element.value != "💣" && arrButtons[location].element.value != "reserved") {
-			arrButtons[location].element.value = "💣"
+		let location = Math.floor(Math.random()*board.arrButtons.length)
+		if (board.arrButtons[location].element.value != "💣" && board.arrButtons[location].element.value != "reserved") {
+			board.arrButtons[location].element.value = "💣"
 			i++
 		}		
 	}
@@ -153,7 +195,7 @@ function setMines() {
 
 // Asigna valores a los casilleros en relación a la cantidad de casilleros aledaños que tienen minas
 function setValues() {
-	arrButtons.forEach(button => {
+	board.arrButtons.forEach(button => {
 		mineCount = 0
 		if (button.element.value != "💣") {
 			findAdjacents(button).forEach(adjacent => {
@@ -191,7 +233,7 @@ function findAdjacents(button) {
 	}
 	// devuelve el botton al ingresar su id
 	function selectButtonFromId(buttonId) {
-		return (arrButtons.filter(button => {return button.element.id === buttonId}))[0]
+		return (board.arrButtons.filter(button => {return button.element.id === buttonId}))[0]
 	}
 	return adjacents
 }
@@ -239,7 +281,7 @@ function revealValue(button) {
 			revealAdjacents(button)
 		}
 	}
-	if((arrButtons.filter(button => {return button.revealed === false})).length - amountMines === 0) {
+	if((board.arrButtons.filter(button => {return button.revealed === false})).length - amountMines === 0) {
 		return endWon()
 	}
 }
@@ -263,55 +305,13 @@ function endGameReveal(button) {
 	}
 }
 
-// Inicializa el tablero, creando los botones 
-function boardGenerate() {
-	board = document.createElement("div")
-	board.id = "board"
-	document.body.appendChild(board)
-	firstButtonClicked = false	
-	x = checkSize()
-	board.style.columnCount = x
-	board.style.width = `${(x*buttonSize)}px`
-	amountMines = Math.floor(x * y / minesRatio)
-	arrButtons = []
-	for (let i = 0; i < y; i++) {
-		for (let j = 0; j < x; j++) {
-			new Button (i, j);
-		}
-	}
-}
-
-//lo hace "responsive"
-function checkSize() {
-	width = x * (buttonSize + 1)
-	if (!(isMobile)) {
-		if(width > window.innerWidth) {
-			x--
-			checkSize()
-		}
-		if((width + buttonSize) < window.innerWidth && x < xInit) {
-			x++
-			checkSize()
-		}
-	} else if(isMobile) {
-		if(width > screen.width) {
-			x--
-			checkSize()
-		}
-		if((width + 2*buttonSize) < screen.width) {
-			x++
-			checkSize()
-		}
-	}
-	return x
-}
 
 
 
 // we are on the end game now
 function endGame() {
 	face.textContent = "🤯"
-	arrButtons.forEach(button => endGameReveal(button))
+	board.arrButtons.forEach(button => endGameReveal(button))
 	alert("¡Había una bomba en ese casillero! Vuelve a intentarlo.")
 	reset()
 }
@@ -330,6 +330,7 @@ function reset(){
 	titleObj = {}
 	titleObj = new Title
 	timeStop()
+	firstButtonClicked = false
 }
 
 // funciones que manejan el timer
