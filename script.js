@@ -265,7 +265,9 @@ function endGameReveal(button) {
 
 // Inicializa el tablero, creando los botones 
 function boardGenerate() {
-	board.innerHTML = ''
+	board = document.createElement("div")
+	board.id = "board"
+	document.body.appendChild(board)
 	firstButtonClicked = false	
 	x = checkSize()
 	board.style.columnCount = x
@@ -323,6 +325,7 @@ function endWon() {
 
 // reset general del juego
 function reset(){
+	document.body.removeChild(board)
 	boardGenerate()
 	titleObj = {}
 	titleObj = new Title
@@ -337,6 +340,8 @@ function timerStart() {
 	, 1000)
 }
 function timeStop() {
+	time = 0
+	titleObj.timer.textContent = `${time.toString().padStart(4, '0')}`
  	clearInterval(timeX)
 }
 
