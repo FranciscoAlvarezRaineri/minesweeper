@@ -17,6 +17,7 @@ body {
     margin: 0px;
     color:  #cfe7ff;
     font-weight: bold;
+    font-size: 18px;
 }
 
 #board {
@@ -37,6 +38,7 @@ body {
     justify-content: center;
     align-items: center;
     column-count: 5;
+    font-size: 18px;
 }
 
 .title-element {
