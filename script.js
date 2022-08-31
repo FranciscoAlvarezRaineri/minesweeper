@@ -68,7 +68,7 @@ function titleCreate(){
 	document.getElementById("medium").addEventListener("click", function() {setSize(32); return reset()})
 	document.getElementById("big").addEventListener("click", function() {setSize(48); return reset()})
 	title.face.addEventListener("click", function() {reset()})
-	title.instructions.addEventListener("click", function() {title.showInstructions()})
+	title.instructions.addEventListener("click", function() {showInstructions()})
 	title.time = 0;
 	title.timeX;
 	titleReset()
