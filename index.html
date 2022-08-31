@@ -14,12 +14,20 @@
   <div id="title">
     <span class="title-element" id="mines"></span>
     <span class="title-element" id="dificulty">
-      <select name="dificulty" class="titlebutton">
-        <option value="easy" id="easy">Fácil</option>
-        <option value="normal" id="normal" selected>Normal</option>
-        <option value="hard" id="hard">Difícil</option>
-        <option value="custom" id="custom">Custom</option>
-     </select>
+       <select id="menu" class="titlebutton">
+          <optgroup label="Dificultad" >
+          <option value="easy" id="easy">Fácil</option>
+          <option value="normal" id="normal" selected>Normal</option>
+          <option value="hard" id="hard">Difícil</option>
+          <option value="custom" id="custom">Custom</option>
+        </optgroup>
+        <optgroup label="Casilleros">
+          <option value="small" id="small">Chicos</option>
+          <option value="medium" id="medium" selected>Medianos</option>
+          <option value="big" id="big">Grandes</option>
+       </optgroup>
+      </select>
+
     </span>
     <span class="title-element" id="face"></span>
     <span class="title-element" id="instructions" >

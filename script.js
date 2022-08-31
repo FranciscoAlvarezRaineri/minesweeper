@@ -64,6 +64,9 @@ function titleCreate(){
 	document.getElementById("normal").addEventListener("click", function() {setDificulty("normal"); return reset()})
 	document.getElementById("hard").addEventListener("click", function() {setDificulty("hard"); return reset()})
 	document.getElementById("custom").addEventListener("click", function() {setDificulty("custom"); return reset()})
+	document.getElementById("small").addEventListener("click", function() {setSize(24); return reset()})
+	document.getElementById("medium").addEventListener("click", function() {setSize(32); return reset()})
+	document.getElementById("big").addEventListener("click", function() {setSize(48); return reset()})
 	title.face.addEventListener("click", function() {reset()})
 	title.instructions.addEventListener("click", function() {title.showInstructions()})
 	title.time = 0;
@@ -99,18 +102,18 @@ function showInstructions() {
 	alert("Un click sobre la casilla revela su contenido. El numero revelado indica la cantidad de bombas aledañas a la casilla. Si clickeas en una bomba pierdes. Un click sostenido sobre una casilla sin revelar, la marca como una bomba. Un click sostenido sobre una casilla revelada, revela las aledañas que no esten marcadas como bombas.")
 }
 
-// selecciona la dificultad
+// selecciona la dificultad y el tamaño
 function setDificulty(dificultyLevel) {
 	switch (dificultyLevel) {
 		case "easy":
 			xInit = 16
 			y = 10
-			minesRatio = 5.2
+			minesRatio = 5.6
 			break;
 		case "normal":
 			xInit = 20
 			y = 12
-			minesRatio = 4.8
+			minesRatio = 5
 			break;
 		case "hard":
 			xInit = 24
@@ -122,7 +125,11 @@ function setDificulty(dificultyLevel) {
 			break;
 	}
 	x = xInit
-	buttonSize = 32
+}
+
+function setSize(size) {
+	buttonSize = size
+	fontSize = Math.floor(size*0.6)
 }
 
 // Crea los casilleros
@@ -138,9 +145,10 @@ class Button {
 		this.wasHeld = false //indica si fue sostenido o no
 		//crea el elemento boton, sus valores iniciales y lo agrega al tablero
 		this.element = document.createElement("button")
+		this.element.classList.add("square") 
 		this.element.style.height = `${buttonSize}px`
 		this.element.style.width = `${buttonSize}px`
-		this.element.classList.add("square") 
+		this.element.style.fontSize = `${fontSize}px`
 		this.element.id = `${y.toString().padStart(2, '0')}${x.toString().padStart(2, '0')}`
 		this.element.value = 0;
 		this.setClick(this)
@@ -366,6 +374,7 @@ function timeStop() {
 // Ejecución
 
 setDificulty("normal")
+setSize(32)
 boardCreate()
 titleCreate()
 window.onresize = function() {reset()}
