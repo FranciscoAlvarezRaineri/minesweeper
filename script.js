@@ -177,9 +177,10 @@ class Button {
 				startGame(button.element)
 			}
 			if (!(this.clicked) && !(this.wasHeld)) {
-				singleClickButton(button)
+				button.clicked = true
+				revealValue(button)
 			}
-			this.wasHeld = false
+			this.wasHeld = false //esto es necesario para que al quitar una bandera no se ejecute el click inmediatamente despues
 		})
 	}
 	//funcionalidad hold
@@ -189,7 +190,7 @@ class Button {
 		this.activeHold = setTimeout(() => {
 			if(this.isHeld) {
 				this.wasHeld = true
-				holdClickButton(this)
+				this.holdClickButton(this)
 			}
 		}, 200)
 	}
@@ -197,6 +198,14 @@ class Button {
 		this.isHeld = false
 		face.textContent = "🙂"
 		clearTimeout(this.activeHold)
+	}
+	// funcion del hold, si el boton fue revelado, revela los aledaños; si no, lo flagea.
+	holdClickButton(button) {
+		if(button.revealed) {
+			return revealAdjacents(button)
+		} else {
+			return flagToggle(button)
+		}
 	}
 }
 
@@ -266,33 +275,18 @@ function findAdjacents(button) {
 	return adjacents
 }
 
-// funcion del click, setea clicked, revela el valor, y si no quedan bottones sin bombas por revelar, gano.
-function singleClickButton(button) {
-	button.clicked = true
-	revealValue(button)
-}
-
-// funcion del hold, si el boton fue revelado, revela los aledaños; si no, lo flagea.
-function holdClickButton(button) {
-	if(button.revealed) {
-		return revealAdjacents(button)
-	} else {
-		return flagToggle(button)
-	}
-}
 
 // funcion que togglea la bandera.
 function flagToggle(button) {
 	if(!(button.flagged)) {
-		button.element.textContent = "🚩"
 		button.flagged = true
+		button.element.textContent = "🚩"
 		mines.textContent = parseInt(mines.textContent) - 1
 	} else {
-		button.element.textContent = ""
 		button.flagged = false
+		button.element.textContent = ""
 		mines.textContent = parseInt(mines.textContent) + 1
 	}
-
 }
 
 // función que revela el valor de la casilla, a menos que este flageada. Si es una bomba, endGame, si es 0, revela todas las casillas aledañas.
