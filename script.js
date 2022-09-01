@@ -51,7 +51,7 @@ function checkSize() {
 	}
 	return [x, y]
 }
-
+// ontouchend
 // Crea el título
 function titleCreate(){
 	title = document.getElementById("title")
@@ -61,12 +61,19 @@ function titleCreate(){
 	title.instructions = document.getElementById("instructions");
 	title.timer = document.getElementById("timer");	
 	document.getElementById("easy").addEventListener("click", function() {setDificulty("easy"); return reset()})
+	document.getElementById("easy").addEventListener("ontouchend", function() {setDificulty("easy"); return reset()})
 	document.getElementById("normal").addEventListener("click", function() {setDificulty("normal"); return reset()})
+	document.getElementById("normal").addEventListener("ontouchend", function() {setDificulty("normal"); return reset()})
 	document.getElementById("hard").addEventListener("click", function() {setDificulty("hard"); return reset()})
+	document.getElementById("hard").addEventListener("ontouchend", function() {setDificulty("hard"); return reset()})
 	document.getElementById("custom").addEventListener("click", function() {setDificulty("custom"); return reset()})
+	document.getElementById("custom").addEventListener("ontouchend", function() {setDificulty("custom"); return reset()})
 	document.getElementById("small").addEventListener("click", function() {setSize(24); return reset()})
+	document.getElementById("small").addEventListener("ontouchend", function() {setSize(24); return reset()})
 	document.getElementById("medium").addEventListener("click", function() {setSize(32); return reset()})
+	document.getElementById("medium").addEventListener("ontouchend", function() {setSize(32); return reset()})
 	document.getElementById("big").addEventListener("click", function() {setSize(48); return reset()})
+	document.getElementById("big").addEventListener("ontouchend", function() {setSize(48); return reset()})
 	title.face.addEventListener("click", function() {reset()})
 	title.instructions.addEventListener("click", function() {showInstructions()})
 	title.time = 0;
