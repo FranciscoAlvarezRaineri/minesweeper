@@ -51,7 +51,6 @@ function checkSize() {
 	}
 	return [x, y]
 }
-// ontouchend
 // Crea el título
 function titleCreate(){
 	title = document.getElementById("title")
@@ -60,20 +59,14 @@ function titleCreate(){
 	title.face = document.getElementById("face");
 	title.instructions = document.getElementById("instructions");
 	title.timer = document.getElementById("timer");	
-	document.getElementById("easy").addEventListener("click", function() {setDificulty("easy"); return reset()})
-	document.getElementById("easy").addEventListener("ontouchend", function() {setDificulty("easy"); return reset()})
+	document.getElementById("menu").addEventListener("change", function() {setDificultySize(event); return reset()})
+	/*document.getElementById("easy").addEventListener("click", function() {setDificulty("easy"); return reset()})
 	document.getElementById("normal").addEventListener("click", function() {setDificulty("normal"); return reset()})
-	document.getElementById("normal").addEventListener("ontouchend", function() {setDificulty("normal"); return reset()})
 	document.getElementById("hard").addEventListener("click", function() {setDificulty("hard"); return reset()})
-	document.getElementById("hard").addEventListener("ontouchend", function() {setDificulty("hard"); return reset()})
 	document.getElementById("custom").addEventListener("click", function() {setDificulty("custom"); return reset()})
-	document.getElementById("custom").addEventListener("ontouchend", function() {setDificulty("custom"); return reset()})
 	document.getElementById("small").addEventListener("click", function() {setSize(24); return reset()})
-	document.getElementById("small").addEventListener("ontouchend", function() {setSize(24); return reset()})
 	document.getElementById("medium").addEventListener("click", function() {setSize(32); return reset()})
-	document.getElementById("medium").addEventListener("ontouchend", function() {setSize(32); return reset()})
-	document.getElementById("big").addEventListener("click", function() {setSize(48); return reset()})
-	document.getElementById("big").addEventListener("ontouchend", function() {setSize(48); return reset()})
+	document.getElementById("big").addEventListener("click", function() {setSize(48); return reset()})*/
 	title.face.addEventListener("click", function() {reset()})
 	title.instructions.addEventListener("click", function() {showInstructions()})
 	title.time = 0;
@@ -108,9 +101,44 @@ function setCustom() {
 function showInstructions() {
 	alert("Un click sobre la casilla revela su contenido. El numero revelado indica la cantidad de bombas aledañas a la casilla. Si clickeas en una bomba pierdes. Un click sostenido sobre una casilla sin revelar, la marca como una bomba. Un click sostenido sobre una casilla revelada, revela las aledañas que no esten marcadas como bombas.")
 }
-
+//event.target.value
+function setDificultySize(event, dificulty, size) {
+	switch (event.target.value) {
+		case "easy":
+			xInit = 16
+			y = 10
+			minesRatio = 5.6
+			break;
+		case "normal":
+			xInit = 20
+			y = 12
+			minesRatio = 5
+			break;
+		case "hard":
+			xInit = 24
+			y = 14
+			minesRatio = 4.4
+			break;
+		case "custom":
+			setCustom()
+			break;
+		case "small":
+			buttonSize = 24
+			fontSize = 16
+			break;
+		case "medium":
+			buttonSize = 32
+			fontSize = 20
+			break;
+		case "big":
+			buttonSize = 48
+			fontSize = 32
+			break;
+	}
+	x = xInit
+}
 // selecciona la dificultad y el tamaño
-function setDificulty(dificultyLevel) {
+/*function setDificulty(dificultyLevel) {
 	switch (dificultyLevel) {
 		case "easy":
 			xInit = 16
@@ -137,7 +165,7 @@ function setDificulty(dificultyLevel) {
 function setSize(size) {
 	buttonSize = size
 	fontSize = Math.floor(size*0.6)
-}
+}*/
 
 // Crea los casilleros
 class Button {
@@ -374,8 +402,14 @@ function timeStop() {
 
 // Ejecución
 
-setDificulty("normal")
-setSize(32)
+//setDificultySize("normal")
+//setSize(32)
+			xInit = 20
+			y = 12
+			x = xInit
+			minesRatio = 5
+			buttonSize = 32
+			fontSize = 20
 boardCreate()
 titleCreate()
 window.onresize = function() {reset()}
