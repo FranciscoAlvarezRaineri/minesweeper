@@ -1,4 +1,4 @@
-//Checks movile
+//Checks mobile
 mobileCheck = function () {
   let check = false;
   (function (a) {
